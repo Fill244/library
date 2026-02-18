@@ -1,0 +1,10 @@
+<h1>Выдача книги</h1>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Выдать</button>
+</form>
+
+<br>
+<a href="/overdue/">Назад к отчёту</a>

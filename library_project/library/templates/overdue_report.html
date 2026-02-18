@@ -1,0 +1,23 @@
+<h1>Отчёт "Просрочки"</h1>
+
+<p>Доля просроченных выдач: {{ percent }}%</p>
+
+<table border="1">
+    <tr>
+        <th>Reader ID</th>
+        <th>ФИО</th>
+        <th>Book Code</th>
+        <th>Название</th>
+        <th>Дней просрочки</th>
+    </tr>
+
+    {% for loan in loans %}
+    <tr>
+        <td>{{ loan.reader.reader_id }}</td>
+        <td>{{ loan.reader.fio }}</td>
+        <td>{{ loan.book.book_code }}</td>
+        <td>{{ loan.book.title }}</td>
+        <td>{{ loan.days_overdue }}</td>
+    </tr>
+    {% endfor %}
+</table>

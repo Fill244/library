@@ -1,0 +1,15 @@
+<h1>Возврат книги</h1>
+
+<p>
+    Читатель: {{ loan.reader.fio }} <br>
+    Книга: {{ loan.book.title }}
+</p>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Принять возврат</button>
+</form>
+
+<br>
+<a href="/overdue/">Назад к отчёту</a>
