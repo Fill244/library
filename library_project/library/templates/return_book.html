@@ -1,15 +1,21 @@
-<h1>Возврат книги</h1>
+{% extends "base.html" %}
 
-<p>
-    Читатель: {{ loan.reader.fio }} <br>
-    Книга: {{ loan.book.title }}
-</p>
+{% block content %}
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Принять возврат</button>
-</form>
+<div class="card p-4 col-md-6 mx-auto">
+    <h3 class="mb-3">Возврат книги</h3>
 
-<br>
-<a href="/overdue/">Назад к отчёту</a>
+    <p>
+        <strong>Читатель:</strong> {{ loan.reader.fio }} <br>
+        <strong>Книга:</strong> {{ loan.book.title }}
+    </p>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-warning">Принять возврат</button>
+        <a href="/overdue/" class="btn btn-secondary">Назад</a>
+    </form>
+</div>
+
+{% endblock %}

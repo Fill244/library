@@ -3,7 +3,8 @@ from .views import (
     overdue_report,
     export_overdue_csv,
     create_loan,
-    return_book
+    return_book,
+    home
 )
 
 urlpatterns = [
@@ -11,4 +12,5 @@ urlpatterns = [
     path("overdue/export/", export_overdue_csv, name="export_overdue"),
     path("loan/create/", create_loan, name="create_loan"),
     path("loan/return/<int:loan_id>/", return_book, name="return_book"),
+    path('', home, name='home'),
 ]

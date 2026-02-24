@@ -1,10 +1,16 @@
-<h1>Выдача книги</h1>
+{% extends "base.html" %}
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Выдать</button>
-</form>
+{% block content %}
 
-<br>
-<a href="/overdue/">Назад к отчёту</a>
+<div class="card p-4 col-md-6 mx-auto">
+    <h3 class="mb-3">Выдача книги</h3>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Выдать</button>
+        <a href="/overdue/" class="btn btn-secondary">Назад</a>
+    </form>
+</div>
+
+{% endblock %}

@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 
 class Book(models.Model):
@@ -17,6 +18,7 @@ class Reader(models.Model):
     reader_id = models.CharField(max_length=50, primary_key=True)
     fio = models.CharField(max_length=255)
     group = models.CharField(max_length=100)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return self.fio

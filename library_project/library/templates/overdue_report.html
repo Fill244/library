@@ -1,23 +1,140 @@
-<h1>Отчёт "Просрочки"</h1>
+{% extends "base.html" %}
 
-<p>Доля просроченных выдач: {{ percent }}%</p>
+{% block content %}
 
-<table border="1">
-    <tr>
-        <th>Reader ID</th>
-        <th>ФИО</th>
-        <th>Book Code</th>
-        <th>Название</th>
-        <th>Дней просрочки</th>
-    </tr>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Отчёт "Просрочки"</h2>
+    <a href="/loan/create/" class="btn btn-primary">➕ Новая выдача</a>
+</div>
+<div class="row mb-4">
 
-    {% for loan in loans %}
-    <tr>
-        <td>{{ loan.reader.reader_id }}</td>
-        <td>{{ loan.reader.fio }}</td>
-        <td>{{ loan.book.book_code }}</td>
-        <td>{{ loan.book.title }}</td>
-        <td>{{ loan.days_overdue }}</td>
-    </tr>
-    {% endfor %}
-</table>
+    <div class="col-md-3">
+        <div class="card text-bg-primary">
+            <div class="card-body">
+                <h5>Всего выдач</h5>
+                <h3>{{ total_loans }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-bg-success">
+            <div class="card-body">
+                <h5>Активные</h5>
+                <h3>{{ total_active }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-bg-warning">
+            <div class="card-body">
+                <h5>Просроченные</h5>
+                <h3>{{ total_overdue }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-bg-dark">
+            <div class="card-body">
+                <h5>% Просрочек</h5>
+                <h3>{{ percent }}%</h3>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div class="card p-3 mb-4">
+    <h5>Фильтры</h5>
+
+    <form method="get" class="row g-3">
+
+        <div class="col-md-3">
+            <label class="form-label">Период выдачи (с)</label>
+            <input type="date" name="issue_from" class="form-control">
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">по</label>
+            <input type="date" name="issue_to" class="form-control">
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">Читатель</label>
+            <select name="reader" class="form-select">
+                <option value="">Все</option>
+                {% for reader in readers %}
+                    <option value="{{ reader.reader_id }}">
+                        {{ reader.fio }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">Книга</label>
+            <select name="book" class="form-select">
+                <option value="">Все</option>
+                {% for book in books %}
+                    <option value="{{ book.book_code }}">
+                        {{ book.title }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">Просрочка от (дней)</label>
+            <input type="number" name="overdue_from" class="form-control">
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">до</label>
+            <input type="number" name="overdue_to" class="form-control">
+        </div>
+
+        <div class="col-12">
+            <button type="submit" class="btn btn-success">Применить</button>
+            <a href="/overdue/" class="btn btn-secondary">Сброс</a>
+        </div>
+
+    </form>
+</div>
+
+<div class="card p-3">
+    <h5>Доля просрочек: {{ percent }}%</h5>
+
+    <table class="table table-striped table-hover mt-3">
+        <thead class="table-dark">
+            <tr>
+                <th>ФИО</th>
+                <th>Книга</th>
+                <th>Дней просрочки</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for loan in loans %}
+            <tr>
+                <td>{{ loan.reader.fio }}</td>
+                <td>{{ loan.book.title }}</td>
+                <td>{{ loan.days_overdue }}</td>
+                <td>
+                    {% if not loan.return_date and user.groups.all.0.name == "Librarian" %}
+                        <a href="/loan/return/{{ loan.id }}/" class="btn btn-sm btn-warning">
+                            Вернуть
+                        </a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" class="text-center">Нет просрочек</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}
