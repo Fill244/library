@@ -1,0 +1,371 @@
+library/templates/reader_dashboard.html
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мои книги - Государственная библиотека</title>
+    {% load static %}
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: #f0f2f5;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .dashboard {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 20px 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 24px;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .reader-name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .reader-id {
+            background: #f0f2f5;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .logout-btn {
+            background: #fee;
+            color: #dc3545;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #fdd;
+        }
+
+        .warning-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            border-left: 4px solid #dc3545;
+        }
+
+        .books-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .history-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .section-title {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .total-debt {
+            background: #fff3cd;
+            color: #856404;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .book-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .book-card:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .book-card.overdue {
+            background: #fff5f5;
+            border-left: 4px solid #dc3545;
+        }
+
+        .book-card.active {
+            border-left: 4px solid #28a745;
+        }
+
+        .book-info h3 {
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 18px;
+        }
+
+        .book-author {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .book-dates {
+            display: flex;
+            gap: 25px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .overdue-badge {
+            background: #dc3545;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            text-align: center;
+            min-width: 100px;
+        }
+
+        .overdue-badge .days {
+            display: block;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .overdue-badge .label {
+            font-size: 11px;
+            opacity: 0.9;
+        }
+
+        .status-badge {
+            background: #28a745;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .history-table th {
+            text-align: left;
+            padding: 12px;
+            background: #f8f9fa;
+            color: #666;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .history-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: inline-block;
+        }
+
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: inline-block;
+        }
+
+        .no-data {
+            text-align: center;
+            color: #999;
+            padding: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .book-card {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .book-dates {
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="header">
+            <div class="logo">
+                <span>Z</span>
+                <span>Мои книги</span>
+            </div>
+            <div class="user-info">
+                {% if reader %}
+                <span class="reader-name">{{ reader.fio }}</span>
+                <span class="reader-id">№{{ reader.reader_id }}</span>
+                {% endif %}
+                <a href="{% url 'logout' %}" class="logout-btn">Выйти</a>
+            </div>
+        </div>
+
+        <!-- Просроченные книги -->
+        {% if overdue_loans %}
+        <div class="warning-section">
+            <h2 class="section-title">Просроченные книги ({{ overdue_loans|length }})</h2>
+            <div class="total-debt">Общая задолженность: {{ total_debt }} дней</div>
+            {% for loan in overdue_loans %}
+            <div class="book-card overdue">
+                <div class="book-info">
+                    <h3>{{ loan.book.title }}</h3>
+                    <p class="book-author">{{ loan.book.author }}</p>
+                    <div class="book-dates">
+                        <span>Выдана: {{ loan.issue_date|date:"d.m.Y" }}</span>
+                        <span>Вернуть до: {{ loan.due_date|date:"d.m.Y" }}</span>
+                    </div>
+                </div>
+                <div class="overdue-badge">
+                    <span class="days">{{ loan.days_overdue }}</span>
+                    <span class="label">дней</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Активные книги -->
+        <div class="books-section">
+            <h2 class="section-title">Активные книги</h2>
+            {% if active_loans %}
+                {% for loan in active_loans %}
+                <div class="book-card active">
+                    <div class="book-info">
+                        <h3>{{ loan.book.title }}</h3>
+                        <p class="book-author">{{ loan.book.author }}</p>
+                        <div class="book-dates">
+                            <span>Выдана: {{ loan.issue_date|date:"d.m.Y" }}</span>
+                            <span>Вернуть до: {{ loan.due_date|date:"d.m.Y" }}</span>
+                        </div>
+                    </div>
+                    <div class="status-badge">В срок</div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="no-data">Нет активных книг</p>
+            {% endif %}
+        </div>
+
+        <!-- История -->
+        <div class="history-section">
+            <h2 class="section-title">История</h2>
+            {% if history_loans %}
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>Книга</th>
+                        <th>Автор</th>
+                        <th>Дата возврата</th>
+                        <th>Статус</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for loan in history_loans %}
+                    <tr>
+                        <td>{{ loan.book.title }}</td>
+                        <td>{{ loan.book.author }}</td>
+                        <td>{{ loan.return_date|date:"d.m.Y" }}</td>
+                        <td>
+                            {% if loan.return_date <= loan.due_date %}
+                            <span class="badge-success">Вовремя</span>
+                            {% else %}
+                            <span class="badge-warning">Опоздание {{ loan.days_overdue }} дн.</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+                <p class="no-data">История пуста</p>
+            {% endif %}
+        </div>
+    </div>
+    <script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+    </script>
+</body>
+</html>
