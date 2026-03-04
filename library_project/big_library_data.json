@@ -1,0 +1,132 @@
+[
+  {
+    "model": "auth.user",
+    "pk": 11,
+    "fields": {
+      "username": "user11",
+      "password": "pbkdf2_sha256$600000$example$examplehash",
+      "first_name": "Сергей",
+      "last_name": "Петров",
+      "email": "user11@mail.com",
+      "is_staff": false,
+      "is_active": true,
+      "is_superuser": false,
+      "groups": [1],
+      "user_permissions": [],
+      "date_joined": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 12,
+    "fields": {
+      "username": "user12",
+      "password": "pbkdf2_sha256$600000$example$examplehash",
+      "first_name": "Ольга",
+      "last_name": "Сидорова",
+      "email": "user12@mail.com",
+      "is_staff": false,
+      "is_active": true,
+      "is_superuser": false,
+      "groups": [1],
+      "user_permissions": [],
+      "date_joined": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 13,
+    "fields": {
+      "username": "user13",
+      "password": "pbkdf2_sha256$600000$example$examplehash",
+      "first_name": "Игорь",
+      "last_name": "Ковалев",
+      "email": "user13@mail.com",
+      "is_staff": false,
+      "is_active": true,
+      "is_superuser": false,
+      "groups": [1],
+      "user_permissions": [],
+      "date_joined": "2024-01-01T00:00:00Z"
+    }
+  },
+
+  {
+    "model": "library.reader",
+    "pk": "R011",
+    "fields": {
+      "fio": "Петров Сергей Иванович",
+      "group": "ФИ-31",
+      "user": 11
+    }
+  },
+  {
+    "model": "library.reader",
+    "pk": "R012",
+    "fields": {
+      "fio": "Сидорова Ольга Михайловна",
+      "group": "ФИ-32",
+      "user": 12
+    }
+  },
+  {
+    "model": "library.reader",
+    "pk": "R013",
+    "fields": {
+      "fio": "Ковалев Игорь Анатольевич",
+      "group": "ФИ-33",
+      "user": 13
+    }
+  },
+
+  {
+    "model": "library.book",
+    "pk": "B051",
+    "fields": {"title":"Книга 51","author":"Автор 51","year":2001,"udk":"821.161.1"}
+  },
+  {
+    "model": "library.book",
+    "pk": "B052",
+    "fields": {"title":"Книга 52","author":"Автор 52","year":2002,"udk":"821.161.1"}
+  },
+  {
+    "model": "library.book",
+    "pk": "B053",
+    "fields": {"title":"Книга 53","author":"Автор 53","year":2003,"udk":"821.161.1"}
+  },
+  {
+    "model": "library.book",
+    "pk": "B054",
+    "fields": {"title":"Книга 54","author":"Автор 54","year":2004,"udk":"821.161.1"}
+  },
+  {
+    "model": "library.book",
+    "pk": "B055",
+    "fields": {"title":"Книга 55","author":"Автор 55","year":2005,"udk":"821.161.1"}
+  },
+  {
+    "model": "library.book",
+    "pk": "B056",
+    "fields": {"title":"Книга 56","author":"Автор 56","year":2006,"udk":"821.161.1"}
+  },
+  {
+    "model": "library.book",
+    "pk": "B057",
+    "fields": {"title":"Книга 57","author":"Автор 57","year":2007,"udk":"821.161.1"}
+  },
+  {
+    "model": "library.book",
+    "pk": "B058",
+    "fields": {"title":"Книга 58","author":"Автор 58","year":2008,"udk":"821.161.1"}
+  },
+  {
+    "model": "library.book",
+    "pk": "B059",
+    "fields": {"title":"Книга 59","author":"Автор 59","year":2009,"udk":"821.161.1"}
+  },
+  {
+    "model": "library.book",
+    "pk": "B060",
+    "fields": {"title":"Книга 60","author":"Автор 60","year":2010,"udk":"821.161.1"}
+  }
+]

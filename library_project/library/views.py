@@ -22,7 +22,7 @@ def home(request):
         if request.user.groups.filter(name="Librarian").exists():
             return redirect("librarian_dashboard")
         return redirect("reader_dashboard")
-    return render(request, "home.html")
+    return render(request, "login.html")
 
 
 def login_view(request):
@@ -148,8 +148,29 @@ def reader_dashboard(request):
             {"reader": None, "active_loans": [], "overdue_loans": [], "history_loans": [], "total_debt": 0},
         )
 
-    active_loans = Loan.objects.filter(reader=reader, return_date__isnull=True).select_related("book").order_by("due_date")
-    overdue_loans = [l for l in active_loans if l.is_overdue]
+    today = timezone.now().date()
+
+    # активные НЕ просроченные
+    active_loans = Loan.objects.filter(
+        reader=reader,
+        return_date__isnull=True,
+        due_date__gte=today
+    ).select_related("book").order_by("due_date")
+
+    # просроченные
+    overdue_loans = Loan.objects.filter(
+        reader=reader,
+        return_date__isnull=True,
+        due_date__lt=today
+    ).select_related("book").order_by("due_date")
+
+    # история
+    history_loans = Loan.objects.filter(
+        reader=reader,
+        return_date__isnull=False
+    ).select_related("book").order_by("-return_date")
+
+    total_debt = sum(l.days_overdue for l in overdue_loans)
     history_loans = Loan.objects.filter(reader=reader, return_date__isnull=False).select_related("book").order_by("-return_date")
     total_debt = sum(l.days_overdue for l in overdue_loans)
 

@@ -1,0 +1,82 @@
+[
+  {
+    "model": "auth.group",
+    "pk": 1,
+    "fields": {
+      "name": "Users",
+      "permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {"username": "user1","password": "pbkdf2_sha256$600000$example$examplehash","first_name": "Алексей","last_name": "Смирнов","email": "user1@mail.com","is_staff": false,"is_active": true,"is_superuser": false,"groups":[1],"user_permissions":[],"date_joined":"2024-01-01T00:00:00Z"}
+  },
+  {
+    "model": "auth.user",
+    "pk": 2,
+    "fields": {"username": "user2","password": "pbkdf2_sha256$600000$example$examplehash","first_name": "Мария","last_name": "Иванова","email": "user2@mail.com","is_staff": false,"is_active": true,"is_superuser": false,"groups":[1],"user_permissions":[],"date_joined":"2024-01-01T00:00:00Z"}
+  },
+  {
+    "model": "auth.user",
+    "pk": 3,
+    "fields": {"username": "user3","password": "pbkdf2_sha256$600000$example$examplehash","first_name": "Дмитрий","last_name": "Кузнецов","email": "user3@mail.com","is_staff": false,"is_active": true,"is_superuser": false,"groups":[1],"user_permissions":[],"date_joined":"2024-01-01T00:00:00Z"}
+  },
+  {
+    "model": "library.reader",
+    "pk": "R001",
+    "fields": {"fio": "Смирнов Алексей Петрович","group":"ПИ-21","user":1}
+  },
+  {
+    "model": "library.reader",
+    "pk": "R002",
+    "fields": {"fio": "Иванова Мария Сергеевна","group":"ИС-22","user":2}
+  },
+  {
+    "model": "library.reader",
+    "pk": "R003",
+    "fields": {"fio": "Кузнецов Дмитрий Алексеевич","group":"ПИ-21","user":3}
+  },
+
+  {
+    "model": "library.book",
+    "pk": "B001","fields":{"title":"Война и мир","author":"Лев Толстой","year":1869,"udk":"821.161.1"}
+  },
+  {
+    "model": "library.book",
+    "pk": "B002","fields":{"title":"Преступление и наказание","author":"Фёдор Достоевский","year":1866,"udk":"821.161.1"}
+  },
+  {
+    "model": "library.book",
+    "pk": "B003","fields":{"title":"Мастер и Маргарита","author":"Михаил Булгаков","year":1967,"udk":"821.161.1"}
+  },
+  {
+    "model": "library.book",
+    "pk": "B004","fields":{"title":"Анна Каренина","author":"Лев Толстой","year":1877,"udk":"821.161.1"}
+  },
+  {
+    "model": "library.book",
+    "pk": "B005","fields":{"title":"Идиот","author":"Фёдор Достоевский","year":1869,"udk":"821.161.1"}
+  },
+
+  {
+    "model": "library.loan",
+    "pk": 1,"fields":{"reader":"R001","book":"B001","issue_date":"2026-02-01","due_date":"2026-02-10","return_date":null}
+  },
+  {
+    "model": "library.loan",
+    "pk": 2,"fields":{"reader":"R002","book":"B002","issue_date":"2026-01-10","due_date":"2026-01-20","return_date":"2026-01-25"}
+  },
+  {
+    "model": "library.loan",
+    "pk": 3,"fields":{"reader":"R003","book":"B003","issue_date":"2026-01-20","due_date":"2026-02-05","return_date":null}
+  },
+  {
+    "model": "library.loan",
+    "pk": 4,"fields":{"reader":"R001","book":"B004","issue_date":"2026-02-15","due_date":"2026-02-25","return_date":null}
+  },
+  {
+    "model": "library.loan",
+    "pk": 5,"fields":{"reader":"R002","book":"B005","issue_date":"2026-01-01","due_date":"2026-01-10","return_date":"2026-01-09"}
+  }
+]

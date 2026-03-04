@@ -1,0 +1,57 @@
+[
+  {
+    "model": "library.loan",
+    "pk": 46,
+    "fields": {
+      "reader": "R011",
+      "book": "B051",
+      "issue_date": "2026-02-15",
+      "due_date": "2026-02-25",
+      "return_date": null
+    }
+  },
+  {
+    "model": "library.loan",
+    "pk": 47,
+    "fields": {
+      "reader": "R012",
+      "book": "B052",
+      "issue_date": "2026-02-20",
+      "due_date": "2026-03-05",
+      "return_date": null
+    }
+  },
+  {
+    "model": "library.loan",
+    "pk": 48,
+    "fields": {
+      "reader": "R013",
+      "book": "B053",
+      "issue_date": "2026-02-01",
+      "due_date": "2026-02-10",
+      "return_date": "2026-02-12"
+    }
+  },
+  {
+    "model": "library.loan",
+    "pk": 49,
+    "fields": {
+      "reader": "R011",
+      "book": "B054",
+      "issue_date": "2026-01-20",
+      "due_date": "2026-01-30",
+      "return_date": "2026-01-29"
+    }
+  },
+  {
+    "model": "library.loan",
+    "pk": 50,
+    "fields": {
+      "reader": "R012",
+      "book": "B055",
+      "issue_date": "2026-02-10",
+      "due_date": "2026-02-20",
+      "return_date": "2026-02-22"
+    }
+  }
+]
