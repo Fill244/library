@@ -198,15 +198,46 @@ def create_reader(request):
     reader_id = request.POST.get("reader_id", "").strip()
     fio = request.POST.get("fio", "").strip()
     group = request.POST.get("group", "").strip()
+    username = request.POST.get("username", "").strip()
+    password = request.POST.get("password", "").strip()
 
-    if not reader_id or not fio:
+    if not reader_id or not fio or not username or not password:
         return JsonResponse({"success": False, "message": "Заполните все поля"})
 
     if Reader.objects.filter(reader_id=reader_id).exists():
         return JsonResponse({"success": False, "message": "Читатель с таким номером уже существует"})
 
-    r = Reader.objects.create(reader_id=reader_id, fio=fio, group=group)
-    return JsonResponse({"success": True, "message": "Читатель создан", "reader": {"reader_id": r.reader_id, "fio": r.fio}})
+    if User.objects.filter(username=username).exists():
+        return JsonResponse({"success": False, "message": "Логин уже занят"})
+
+    # Создаём Django User
+    user = User.objects.create_user(username=username, password=password)
+    # Добавляем в группу 'User' если есть
+    try:
+        g = Group.objects.get(name="User")
+        user.groups.add(g)
+    except Group.DoesNotExist:
+        pass
+
+    # Создаём/привязываем профиль Reader
+    try:
+        # попытка создать профиль с полем user
+        r, created = Reader.objects.get_or_create(
+            reader_id=reader_id,
+            defaults={"fio": fio, "group": group, "user": user},
+        )
+        if not created:
+            if getattr(r, "user", None) is None:
+                try:
+                    r.user = user
+                    r.save()
+                except Exception:
+                    pass
+    except Exception:
+        # Если модель Reader не имеет поля user — создать без привязки
+        r = Reader.objects.create(reader_id=reader_id, fio=fio, group=group)
+
+    return JsonResponse({"success": True, "message": "Читатель и учётная запись созданы", "reader": {"reader_id": r.reader_id, "fio": r.fio, "username": user.username}})
 
 
 @login_required

@@ -3,16 +3,11 @@
 {% block content %}
 
 <div class="card p-4 col-md-4 mx-auto">
-    <h3 class="mb-3">Регистрация</h3>
+    <h3 class="mb-3">Регистрация отключена</h3>
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-success w-100">Зарегистрироваться</button>
-    </form>
-
+    <p>Создавать учётные записи может только библиотекарь через панель администратора или через панель библиотекаря.</p>
     <div class="mt-3 text-center">
-        Уже есть аккаунт? <a href="/login/">Войти</a>
+        <a href="/login/" class="btn btn-primary">Перейти на страницу входа</a>
     </div>
 </div>
 

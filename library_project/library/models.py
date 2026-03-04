@@ -35,9 +35,8 @@ class Loan(models.Model):
         if self.issue_date > self.due_date:
             raise ValidationError("issue_date <= due_date")
 
-        if self.return_date:
-            if self.due_date > self.return_date:
-                raise ValidationError("due_date <= return_date")
+        if self.return_date and self.return_date < self.issue_date:
+            raise ValidationError("issue_date <= return_date")
 
         # Проверка одной активной выдачи
         if not self.return_date:

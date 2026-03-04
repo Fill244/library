@@ -345,7 +345,7 @@
         <!-- Кнопки действий -->
         <div class="actions-bar">
             <button class="btn btn-primary" onclick="showForm('loanForm')">Новая выдача</button>
-            <!--<button class="btn btn-primary" onclick="showForm('readerForm')">Новый читатель</button>-->
+            <button class="btn btn-primary" onclick="showForm('readerForm')">Новый читатель</button>
             <input type="text" class="search-input" id="searchInput" placeholder="Поиск по таблице...">
         </div>
 
@@ -379,7 +379,7 @@
             </form>
         </div>
 
-        <!-- Форма нового читателя 
+        <!-- Форма нового читателя -->
         <div id="readerForm" class="form-card" style="display: none;">
             <h3>Регистрация читателя</h3>
             <div class="error-message" id="readerError" style="display: none;"></div>
@@ -388,13 +388,14 @@
                 <div class="form-grid">
                     <input type="text" name="reader_id" class="form-input" id="readerId" placeholder="Номер билета" required>
                     <input type="text" name="fio" class="form-input" id="readerFio" placeholder="ФИО" required>
-                    <input type="text" name="group" class="form-input" id="readerGroup" placeholder="Группа" required>
-                    
+                    <input type="text" name="group" class="form-input" id="readerGroup" placeholder="Группа">
+                    <input type="text" name="username" class="form-input" id="readerUsername" placeholder="Логин" required>
+                    <input type="password" name="password" class="form-input" id="readerPassword" placeholder="Пароль" required>
                     <button type="submit" class="btn btn-primary">Создать</button>
                     <button type="button" class="btn btn-secondary" onclick="hideForm('readerForm')">Отмена</button>
                 </div>
             </form>
-        </div> -->
+        </div>
 
         <!-- Таблица текущих выдач -->
         <div class="table-section">
@@ -571,40 +572,43 @@
         });
     });
 
-    document.getElementById('readerFormSubmit').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const readerId = document.getElementById('readerId').value;
-        const fio = document.getElementById('readerFio').value;
-        const group = document.getElementById('readerGroup').value;
-        const errorElement = document.getElementById('readerError');
+    const readerForm = document.getElementById('readerFormSubmit');
+    if (readerForm) {
+        readerForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const readerId = document.getElementById('readerId').value;
+            const fio = document.getElementById('readerFio').value;
+            const username = document.getElementById('readerUsername').value;
+            const password = document.getElementById('readerPassword').value;
+            const errorElement = document.getElementById('readerError');
 
-        if (!readerId || !fio || !group) {
-            errorElement.textContent = 'Пожалуйста, заполните все поля';
-            errorElement.style.display = 'block';
-            return;
-        }
-
-        let form = this;
-        let formData = new FormData(form);
-
-        fetch(form.action, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRFToken': csrftoken
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert(data.message);
-                location.reload();
-            } else {
-                errorElement.textContent = data.message;
+            if (!readerId || !fio || !username || !password) {
+                errorElement.textContent = 'Пожалуйста, заполните все обязательные поля';
                 errorElement.style.display = 'block';
+                return;
             }
+
+            let formData = new FormData(this);
+
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': csrftoken
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message + '\nЛогин: ' + data.reader.username);
+                    location.reload();
+                } else {
+                    errorElement.textContent = data.message;
+                    errorElement.style.display = 'block';
+                }
+            });
         });
-    });
+    }
 
     // отключаем обработчики скрытия ошибок при вводе
     document.querySelectorAll('#loanForm input, #loanForm select').forEach(element => {
@@ -615,7 +619,10 @@
 
     document.querySelectorAll('#readerForm input').forEach(element => {
         element.addEventListener('input', function() {
-            document.getElementById('readerError').style.display = 'none';
+            const readerError = document.getElementById('readerError');
+            if (readerError) {
+                readerError.style.display = 'none';
+            }
         });
     });
     </script>
