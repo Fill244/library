@@ -102,8 +102,9 @@ def librarian_dashboard(request):
     overdue_percent = round((overdue_count / active_loans_count * 100), 2) if active_loans_count else 0
 
     readers = Reader.objects.all()
-    books = Book.objects.all()
     active_loans = active_loans_qs.select_related("reader", "book").order_by("due_date")
+    loaned_book_ids = active_loans_qs.values_list("book_id", flat=True)
+    loanable_books = Book.objects.exclude(book_code__in=loaned_book_ids)
 
     default_due_date = (today + timedelta(days=14)).isoformat()
 
@@ -114,7 +115,7 @@ def librarian_dashboard(request):
         "overdue_count": overdue_count,
         "overdue_percent": overdue_percent,
         "readers": readers,
-        "books": books,
+        "loanable_books": loanable_books,
         "active_loans": active_loans,
         "overdue_loans": overdue_qs.select_related("reader", "book"),
         "today": today.isoformat(),

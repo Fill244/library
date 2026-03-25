@@ -195,6 +195,43 @@
             box-shadow: 0 5px 20px rgba(0,0,0,0.05);
         }
 
+        /* модальное окно */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 5% auto;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 700px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        .modal-close {
+            float: right;
+            font-size: 22px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            color: #666;
+        }
+
+        .modal-close:hover {
+            color: #000;
+        }
+
         h2 {
             color: #333;
             margin-bottom: 20px;
@@ -356,27 +393,52 @@
             <form method="post" action="{% url 'create_loan' %}" id="loanFormSubmit">
                 {% csrf_token %}
                 <div class="form-grid">
-                    <select name="reader_id" class="form-input" id="loanReader" required>
-                        <option value="">Выберите читателя</option>
-                        {% for reader in readers %}
-                        <option value="{{ reader.reader_id }}">{{ reader.fio }}</option>
-                        {% endfor %}
-                    </select>
-                    
-                    <select name="book_id" class="form-input" id="loanBook" required>
-                        <option value="">Выберите книгу</option>
-                        {% for book in books %}
-                        <option value="{{ book.book_code }}">{{ book.title }} ({{ book.book_code }})</option>
-                        {% endfor %}
-                    </select>
-                    
+                    <div>
+                        <label for="loanReaderDisplay">Читатель</label>
+                        <input type="hidden" name="reader_id" id="loanReaderId" required>
+                        <input type="text" id="loanReaderDisplay" class="form-input" placeholder="Не выбран" readonly>
+                        <button type="button" class="btn btn-secondary" onclick="openReaderPicker()">Выбрать читателя</button>
+                    </div>
+                    <div>
+                        <label for="loanBookDisplay">Книга</label>
+                        <input type="hidden" name="book_id" id="loanBookId" required>
+                        <input type="text" id="loanBookDisplay" class="form-input" placeholder="Не выбрана" readonly>
+                        <button type="button" class="btn btn-secondary" onclick="openBookPicker()">Выбрать книгу</button>
+                    </div>
                     <input type="date" name="issue_date" class="form-input" id="loanIssueDate" value="{{ today }}" required>
                     <input type="date" name="due_date" class="form-input" id="loanDueDate" value="{{ default_due_date }}" required>
-                    
                     <button type="submit" class="btn btn-primary">Оформить</button>
                     <button type="button" class="btn btn-secondary" onclick="hideForm('loanForm')">Отмена</button>
                 </div>
             </form>
+        </div>
+
+        <!-- Модальное окно для выбора читателя -->
+        <div id="readerSelectModal" class="modal">
+            <div class="modal-content">
+                <button class="modal-close" onclick="closeReaderPicker()">&times;</button>
+                <h3>Выберите читателя</h3>
+                <input type="text" id="readerSelectSearch" class="form-input" placeholder="Поиск по ФИО или номеру">
+                <div id="readerSelectList" style="max-height:350px; overflow:auto; margin-top:10px;">
+                    {% for reader in readers %}
+                        <button type="button" class="btn btn-secondary" style="margin-bottom:5px; width:100%; text-align:left;" data-reader-id="{{ reader.reader_id }}" data-reader-name="{{ reader.fio|escapejs }}" onclick="selectReader(this)">{{ reader.fio }} ({{ reader.reader_id }})</button>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Модальное окно для выбора книги -->
+        <div id="bookSelectModal" class="modal">
+            <div class="modal-content">
+                <button class="modal-close" onclick="closeBookPicker()">&times;</button>
+                <h3>Выберите книгу</h3>
+                <input type="text" id="bookSelectSearch" class="form-input" placeholder="Поиск по названию или коду">
+                <div id="bookSelectList" style="max-height:350px; overflow:auto; margin-top:10px;">
+                    {% for book in loanable_books %}
+                        <button type="button" class="btn btn-secondary" style="margin-bottom:5px; width:100%; text-align:left;" data-book-id="{{ book.book_code }}" data-book-name="{{ book.title|escapejs }}" onclick="selectBook(this)">{{ book.title }} ({{ book.book_code }})</button>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
 
         <!-- Форма нового читателя -->
@@ -503,6 +565,72 @@
         document.getElementById(id).style.display = 'none';
     }
 
+    function openReaderPicker() {
+        document.getElementById('readerSelectModal').style.display = 'block';
+        document.getElementById('readerSelectSearch').value = '';
+        filterItems('readerSelectList', 'readerSelectSearch');
+    }
+
+    function closeReaderPicker() {
+        document.getElementById('readerSelectModal').style.display = 'none';
+    }
+
+    function openBookPicker() {
+        document.getElementById('bookSelectModal').style.display = 'block';
+        document.getElementById('bookSelectSearch').value = '';
+        filterItems('bookSelectList', 'bookSelectSearch');
+    }
+
+    function closeBookPicker() {
+        document.getElementById('bookSelectModal').style.display = 'none';
+    }
+
+    window.addEventListener('click', function(event) {
+        const readerModal = document.getElementById('readerSelectModal');
+        const bookModal = document.getElementById('bookSelectModal');
+        if (readerModal && event.target === readerModal) {
+            closeReaderPicker();
+        }
+        if (bookModal && event.target === bookModal) {
+            closeBookPicker();
+        }
+    });
+
+    function selectReader(button) {
+        const readerId = button.getAttribute('data-reader-id');
+        const readerName = button.getAttribute('data-reader-name');
+        document.getElementById('loanReaderId').value = readerId;
+        document.getElementById('loanReaderDisplay').value = readerName + ' (' + readerId + ')';
+        closeReaderPicker();
+    }
+
+    function selectBook(button) {
+        const bookId = button.getAttribute('data-book-id');
+        const bookName = button.getAttribute('data-book-name');
+        document.getElementById('loanBookId').value = bookId;
+        document.getElementById('loanBookDisplay').value = bookName + ' (' + bookId + ')';
+        closeBookPicker();
+    }
+
+    function filterItems(listId, searchId) {
+        const filter = document.getElementById(searchId).value.trim().toLowerCase();
+        const container = document.getElementById(listId);
+        if (!container) return;
+        const buttons = container.querySelectorAll('button[data-' + (listId === 'readerSelectList' ? 'reader' : 'book') + '-id]');
+        buttons.forEach(btn => {
+            const text = btn.textContent.toLowerCase();
+            btn.style.display = text.includes(filter) ? 'block' : 'none';
+        });
+    }
+
+    document.getElementById('readerSelectSearch').addEventListener('input', function() {
+        filterItems('readerSelectList', 'readerSelectSearch');
+    });
+
+    document.getElementById('bookSelectSearch').addEventListener('input', function() {
+        filterItems('bookSelectList', 'bookSelectSearch');
+    });
+
     function returnBook(loanId) {
         if (confirm('Подтвердить возврат книги?')) {
             fetch(`/librarian/return-book/${loanId}/`, {
@@ -532,8 +660,8 @@
 
     document.getElementById('loanFormSubmit').addEventListener('submit', function(e) {
         e.preventDefault();
-        const reader = document.getElementById('loanReader').value;
-        const book = document.getElementById('loanBook').value;
+        const reader = document.getElementById('loanReaderId').value;
+        const book = document.getElementById('loanBookId').value;
         const issueDate = document.getElementById('loanIssueDate').value;
         const dueDate = document.getElementById('loanDueDate').value;
         const errorElement = document.getElementById('loanError');
